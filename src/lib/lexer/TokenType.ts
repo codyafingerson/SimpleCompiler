@@ -7,6 +7,10 @@ enum TokenType {
     Equal = "Equal",
     LeftParen = "LeftParen",
     RightParen = "RightParen",
+    Function = "Function",
+    RightBrace = "RightBrace",
+    LeftBrace = "LeftBrace",
+    Comma = "Comma",
 }
 
 export default TokenType;

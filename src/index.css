@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:focus {
+    outline: none;
+}
+::-webkit-resizer {
+    display: none;
+}
+
+::selection {
+    background-color: rgb(167 139 250);
+    color: white;
+}

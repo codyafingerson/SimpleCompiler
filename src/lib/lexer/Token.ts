@@ -1,5 +1,8 @@
 import TokenType from "./TokenType.ts";
 
+/**
+ *
+ */
 class Token {
     private readonly start: number;
     private readonly end: number;

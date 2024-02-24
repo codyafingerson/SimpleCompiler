@@ -1,14 +1,35 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function NavBar() {
+    const location = useLocation();
+
+    const getLinkClasses = (path: string) => {
+        let classes = "text-violet-400 px-4 py-2 border border-violet-400 rounded hover:bg-violet-400 hover:text-white transition-colors";
+        if (location.pathname === path) {
+            classes += " bg-violet-400 text-white";
+        }
+        return classes;
+    };
+
     return (
         <nav className="p-6 dark:bg-gray-800 text-white">
+            <h1 className="text-3xl font-bold mt-2 mb-4">Simple "Compiler" 🤓</h1>
             <ul className="flex space-x-4">
-                <li><Link to="/" className="text-purple-400">Lexer</Link></li>
-                <li><Link to="/parser" className="text-purple-400">Parser</Link></li>
-                <li><Link to="/compiler" className="text-purple-400">Compiler</Link></li>
-                <li><Link to="/executor" className="text-purple-400">Executor</Link></li>
-                <li><Link to="/about" className="text-purple-400">About</Link></li>
+                <li>
+                    <Link to="/" className={getLinkClasses("/")}>Lexer</Link>
+                </li>
+                <li>
+                    <Link to="/parser" className={getLinkClasses("/parser")}>Parser</Link>
+                </li>
+                <li>
+                    <Link to="/compiler" className={getLinkClasses("/compiler")}>Compiler</Link>
+                </li>
+                <li>
+                    <Link to="/executor" className={getLinkClasses("/executor")}>Executor</Link>
+                </li>
+                <li>
+                    <Link to="/about" className={getLinkClasses("/about")}>About</Link>
+                </li>
             </ul>
         </nav>
     );

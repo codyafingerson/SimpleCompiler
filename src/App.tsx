@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 
 import LexerPage from "./pages/LexerPage.tsx";
 import ParserPage from "./pages/ParserPage.tsx";
@@ -11,14 +11,17 @@ export default function App() {
     return (
         <div className="p-6 dark:bg-gray-800 text-white min-h-screen">
             <Router>
-                <NavBar />
+                <NavBar/>
                 <Routes>
-                    <Route path="/" element={<LexerPage />} />
-                    <Route path="/parser" element={<ParserPage />} />
-                    <Route path="/compiler" element={<CompilerPage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/executor" element={<ExecutorPage />} />
+                    <Route path="/" element={<LexerPage/>}/>
+                    <Route path="/parser" element={<ParserPage/>}/>
+                    <Route path="/compiler" element={<CompilerPage/>}/>
+                    <Route path="/about" element={<AboutPage/>}/>
+                    <Route path="/executor" element={<ExecutorPage/>}/>
                 </Routes>
+                <div className="fixed bottom-0 left-0 w-full text-center py-4 text-xs text-zinc-400">
+                    <p>&copy; Cody Fingerson, 2024</p>
+                </div>
             </Router>
         </div>
     );

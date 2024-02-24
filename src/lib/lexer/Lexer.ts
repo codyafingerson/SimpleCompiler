@@ -43,6 +43,12 @@ class Lexer {
             case ')':
                 this.tokenList.add(new Token(this.position, this.position + 1, ")", TokenType.RightParen));
                 break;
+            case '{':
+                this.tokenList.add(new Token(this.position, this.position + 1, "{", TokenType.LeftBrace));
+                break;
+            case '}':
+                this.tokenList.add(new Token(this.position, this.position + 1, "}", TokenType.RightBrace));
+                break;
             default:
                 if (/\d/.test(char)) {
                     let end = this.position + 1;
@@ -51,6 +57,9 @@ class Lexer {
                     }
                     this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Number));
                     this.position = end - 1;
+                } else if (this.source.startsWith("func", this.position)) {
+                    this.tokenList.add(new Token(this.position, this.position + 4, "func", TokenType.Function));
+                    this.position += 3;
                 }
                 break;
         }

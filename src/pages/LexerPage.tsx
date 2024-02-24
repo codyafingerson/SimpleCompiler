@@ -4,7 +4,9 @@ import Token from "../lib/lexer/Token.ts";
 import Button from "../components/Button.tsx";
 
 export default function LexerPage() {
-    const [userInput, setUserInput] = useState<string>('');
+    const [userInput, setUserInput] = useState<string>('func myFunc(param) {\n' +
+        '    var p1 = param;\n' +
+        '}');
     const [lexerOutput, setLexerOutput] = useState<Token[] | undefined>();
 
     useEffect(() => {
@@ -26,10 +28,9 @@ export default function LexerPage() {
     }
 
     return (
-        <div className="p-6 dark:bg-gray-800 text-white min-h-screen">
+        <div className="p-6 dark:bg-gray-800 text-white">
             <form onSubmit={onSubmit} className="flex flex-col space-y-4">
-                <textarea value={userInput} onChange={onChange} className="p-4 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white h-32"/>
-                {/*<button type="submit" className="p-2 bg-purple-400 text-white rounded">Test Lexer</button>*/}
+                <textarea value={userInput} onChange={onChange} className="p-4 rounded-lg dark:bg-gray-700 dark:text-white h-72 focus:border-gray-800 font-mono"/>
                 <Button type="submit" text="Test Lexer"/>
             </form>
             <div className="mt-6">
