@@ -19,7 +19,7 @@ export default function LexerPage() {
         const lexer = new Lexer(userInput);
         console.log(lexer);
 
-        lexer.tokenize();
+        lexer.lex();
         setLexerOutput(lexer.getAllTokens());
     }
 
