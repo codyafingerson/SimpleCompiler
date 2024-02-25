@@ -75,6 +75,33 @@ class LinkedList<T> {
         }
         return -1;
     }
+
+    public insertAt(index: number, value: T): void {
+        if (index < 0 || index > this.size) {
+            return;
+        }
+        const newNode = new ListNode(value);
+        if (index === 0) {
+            newNode.next = this.head;
+            this.head = newNode;
+        } else {
+            let current = this.head;
+            let prev = null;
+            for (let i = 0; i < index; i++) {
+                if (current === null) {
+                    throw new Error("Index out of bounds");
+                }
+                prev = current;
+                current = current.next;
+            }
+            if (prev === null || current === null) {
+                throw new Error("Index out of bounds");
+            }
+            newNode.next = current;
+            prev.next = newNode;
+        }
+        this.size++;
+    }
 }
 
 export default LinkedList;
