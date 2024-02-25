@@ -11,10 +11,10 @@ export default function ExecutorPage() {
     };
 
     return (
-        <div className="p-6 dark:bg-gray-800 text-white">
+        <div className="p-6 bg-gray-800 text-white">
             <div className="flex flex-col space-y-4">
             <textarea
-                className="p-4 rounded-lg dark:bg-gray-700 dark:text-white h-72 focus:border-gray-800 font-mono"
+                className="p-4 rounded-lg bg-gray-700 text-white h-72 focus:border-gray-800 font-mono"
                 value={code}
                 onChange={handleInputChange}
             />

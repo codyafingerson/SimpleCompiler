@@ -28,9 +28,9 @@ export default function LexerPage() {
     }
 
     return (
-        <div className="p-6 dark:bg-gray-800 text-white">
+        <div className="p-6 bg-gray-800 text-white">
             <form onSubmit={onSubmit} className="flex flex-col space-y-4">
-                <textarea value={userInput} onChange={onChange} className="p-4 rounded-lg dark:bg-gray-700 dark:text-white h-72 focus:border-gray-800 font-mono"/>
+                <textarea value={userInput} onChange={onChange} className="p-4 rounded-lg bg-gray-700 text-white h-72 focus:border-gray-800 font-mono"/>
                 <Button type="submit" text="Test Lexer"/>
             </form>
             <div className="mt-6">
