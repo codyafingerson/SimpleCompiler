@@ -70,7 +70,7 @@ class List<T> {
      * @returns {T[]} An array containing all items in the list.
      */
     public toArray(): T[] {
-        return this.items;
+        return this.items as T[];
     }
 }
 
