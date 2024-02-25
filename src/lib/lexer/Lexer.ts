@@ -93,8 +93,12 @@ class Lexer {
      * Returns all the tokens that have been created
      * @returns {Token[]} The list of tokens
      */
-    public getAllTokens(): Token[] {
-        return this.tokenList.toArray()
+    public getAllTokens(): List<Token> {
+        return this.tokenList;
+    }
+
+    public getAllTokensArray(): Token[] {
+        return this.tokenList.toArray();
     }
 }
 
