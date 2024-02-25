@@ -102,6 +102,20 @@ class LinkedList<T> {
         }
         this.size++;
     }
+
+    public get(index: number): T | null {
+        if (index < 0 || index >= this.size) {
+            return null;
+        }
+        let current = this.head;
+        for (let i = 0; i < index; i++) {
+            if (current === null) {
+                throw new Error("Index out of bounds");
+            }
+            current = current.next;
+        }
+        return current ? current.value : null;
+    }
 }
 
 export default LinkedList;
