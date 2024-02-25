@@ -20,7 +20,7 @@ export default function LexerPage() {
         console.log(lexer);
 
         lexer.lex();
-        setLexerOutput(lexer.getAllTokens());
+        setLexerOutput(lexer.getAllTokensArray());
     }
 
     const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
