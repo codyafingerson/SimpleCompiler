@@ -1,3 +1,6 @@
+/**
+ * The type of a token
+ */
 enum TokenType {
     Plus = "Plus",
     Minus = "Minus",
