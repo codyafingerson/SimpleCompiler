@@ -12,25 +12,25 @@ export default function NavBar() {
     };
 
     return (
-        <nav className="p-6 dark:bg-gray-800 text-white">
-            <h1 className="text-3xl font-bold mt-2 mb-4">Simple "Compiler" 🤓</h1>
-            <ul className="flex space-x-4">
-                <li>
-                    <Link to="/" className={getLinkClasses("/")}>Lexer</Link>
-                </li>
-                <li>
-                    <Link to="/parser" className={getLinkClasses("/parser")}>Parser</Link>
-                </li>
-                <li>
-                    <Link to="/compiler" className={getLinkClasses("/compiler")}>Compiler</Link>
-                </li>
-                <li>
-                    <Link to="/executor" className={getLinkClasses("/executor")}>Executor</Link>
-                </li>
-                <li>
-                    <Link to="/about" className={getLinkClasses("/about")}>About</Link>
-                </li>
-            </ul>
-        </nav>
-    );
+    <nav className="p-6 bg-gray-800 text-white navbar flex items-center justify-between">
+        <h1 className="text-2xl md:text-3xl font-bold mt-2 mb-4">Simple "Compiler" 🤓</h1>
+        <ul className="flex space-x-4">
+            <li>
+                <Link to="/" className={getLinkClasses("/")}>Lexer</Link>
+            </li>
+            <li>
+                <Link to="/parser" className={getLinkClasses("/parser")}>Parser</Link>
+            </li>
+            <li>
+                <Link to="/compiler" className={getLinkClasses("/compiler")}>Compiler</Link>
+            </li>
+            <li>
+                <Link to="/executor" className={getLinkClasses("/executor")}>Executor</Link>
+            </li>
+            <li>
+                <Link to="/about" className={getLinkClasses("/about")}>About</Link>
+            </li>
+        </ul>
+    </nav>
+);
 }

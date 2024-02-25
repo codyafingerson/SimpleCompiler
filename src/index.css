@@ -13,3 +13,10 @@
     background-color: rgb(167 139 250);
     color: white;
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+  }
+}
+
