@@ -9,7 +9,7 @@ import NavBar from "./components/Navbar.tsx";
 
 export default function App() {
     return (
-        <div className="p-6 bg-gray-800 text-white min-h-screen">
+        <div className="min-h-screen min-w-60 p-6 bg-gray-800 text-white">
             <Router>
                 <NavBar/>
                 <Routes>
