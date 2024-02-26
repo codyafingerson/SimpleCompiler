@@ -1,6 +1,8 @@
 import Token from "./Token.ts";
 import List from "../data-structures/List.ts";
 import TokenType from "./TokenType.ts";
+import SymbolTable from "../data-structures/SymbolTable.ts";
+import LexingError from "./LexingError.ts";
 
 /**
  * The lexer for the Simple Compiler
@@ -11,6 +13,11 @@ class Lexer {
     private readonly tokenList: List<Token>;
     private readonly source: string;
     private position: number = 0;
+    // private readonly keywords: string[];
+    // private readonly operators: string[];
+    // private readonly whitespace: string[];
+    private readonly keywords: SymbolTable<string, TokenType> = new SymbolTable<string, TokenType>();
+    private readonly operators: SymbolTable<string, TokenType> = new SymbolTable<string, TokenType>();
 
     /**
      * Creates a new instance of the Lexer
@@ -19,192 +26,8 @@ class Lexer {
     constructor(source: string) {
         this.source = source;
         this.tokenList = new List<Token>();
-    }
-
-    // Consumes white space characters
-    private consumeWhiteSpace() {
-        while (this.position < this.source.length && /\s/.test(this.source[this.position])) {
-            this.position++;
-        }
-    }
-
-    // Matches a token from the source code
-    private match() {
-        const char = this.source[this.position];
-        if (this.source.startsWith("//", this.position)) {
-            let end = this.position + 2;
-            while (end < this.source.length && this.source[end] !== '\n') {
-                end++;
-            }
-            this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Comment));
-            this.position = end - 1;
-        } else {
-            switch (char) {
-                case '+':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "+", TokenType.Plus));
-                    break;
-                case '-':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "-", TokenType.Minus));
-                    break;
-                case '*':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "*", TokenType.Star));
-                    break;
-                case '/':
-                    // Check if this is a division operation
-                    if (this.source[this.position + 1] !== '/') {
-                        this.tokenList.add(new Token(this.position, this.position + 1, "/", TokenType.Slash));
-                    }
-                    break;
-                case '=':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "=", TokenType.Equal));
-                    break;
-                case '(':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "(", TokenType.LeftParen));
-                    break;
-                case ')':
-                    this.tokenList.add(new Token(this.position, this.position + 1, ")", TokenType.RightParen));
-                    break;
-                case '{':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "{", TokenType.LeftBrace));
-                    break;
-                case '}':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "}", TokenType.RightBrace));
-                    break;
-                case ';':
-                    this.tokenList.add(new Token(this.position, this.position + 1, ";", TokenType.SemiColon));
-                    break;
-                case `"`:
-                    let end = this.position + 1;
-                    while (end < this.source.length && this.source[end] !== `"`) {
-                        end++;
-                    }
-                    if (end === this.source.length) {
-                        this.tokenList.add(new Token(this.position, this.position + 1, `"`, TokenType.Error));
-                    } else {
-                        this.tokenList.add(new Token(this.position, end + 1, this.source.slice(this.position, end + 1), TokenType.String));
-                        this.position = end;
-                    }
-                    break;
-                case ',':
-                    this.tokenList.add(new Token(this.position, this.position + 1, ",", TokenType.Comma));
-                    break;
-                default:
-                    if (/\d/.test(char)) {
-                        let end = this.position + 1;
-                        while (end < this.source.length && /\d/.test(this.source[end])) {
-                            end++;
-                        }
-                        this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Int));
-                        this.position = end - 1;
-                    } else if (this.source.startsWith("func", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "func", TokenType.Func));
-                        this.position += 4;
-
-                        this.consumeWhiteSpace();
-
-                        // Match function name
-                        if (/[a-zA-Z_]/.test(this.source[this.position])) {
-                            let end = this.position + 1;
-                            while (end < this.source.length && /[a-zA-Z0-9_]/.test(this.source[end])) {
-                                end++;
-                            }
-                            this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Identifier));
-                            this.position = end;
-                        }
-
-                        this.consumeWhiteSpace();
-
-                        // Match opening parenthesis
-                        if (this.source[this.position] === '(') {
-                            this.tokenList.add(new Token(this.position, this.position + 1, "(", TokenType.LeftParen));
-                            this.position++;
-
-                            // Match parameters
-                            while (this.position < this.source.length && this.source[this.position] !== ')') {
-                                this.consumeWhiteSpace();
-
-                                // Match parameter
-                                if (/[a-zA-Z_]/.test(this.source[this.position])) {
-                                    let end = this.position + 1;
-                                    while (end < this.source.length && /[a-zA-Z0-9_]/.test(this.source[end])) {
-                                        end++;
-                                    }
-                                    this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Parameter));
-                                    this.position = end;
-                                }
-
-                                this.consumeWhiteSpace();
-
-                                // Match comma
-                                if (this.source[this.position] === ',') {
-                                    this.tokenList.add(new Token(this.position, this.position + 1, ",", TokenType.Comma));
-                                    this.position++;
-                                }
-                            }
-
-                            // Match closing parenthesis
-                            if (this.source[this.position] === ')') {
-                                this.tokenList.add(new Token(this.position, this.position + 1, ")", TokenType.RightParen));
-                                this.position++;
-                            }
-                        }
-                    } else if (this.source.startsWith("if", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 2, "if", TokenType.If));
-                        this.position += 1;
-                    } else if (this.source.startsWith("else", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "else", TokenType.Else));
-                        this.position += 3;
-                    } else if (this.source.startsWith("return", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "return", TokenType.Return));
-                        this.position += 5;
-                    } else if (this.source.startsWith("true", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "true", TokenType.True));
-                        this.position += 3;
-                    } else if (this.source.startsWith("false", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 5, "false", TokenType.False));
-                        this.position += 4;
-                    } else if (this.source.startsWith("output", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "output", TokenType.Output));
-                        this.position += 5;
-                    } else if (this.source.startsWith("null", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "null", TokenType.Null));
-                        this.position += 3;
-                    } else if (this.source.startsWith("for", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 3, "for", TokenType.For));
-                        this.position += 2;
-                    } else if (this.source.startsWith("while", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 5, "while", TokenType.While));
-                        this.position += 4;
-                    } else if (this.source.startsWith("in", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 2, "in", TokenType.In));
-                        this.position += 1;
-                    } else if (this.source.startsWith("create", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "create", TokenType.Create));
-                        this.position += 5;
-                    } else if (this.source.startsWith("string", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "string", TokenType.String));
-                        this.position += 5;
-                    } else if (/[a-zA-Z_]/.test(char)) {
-                        let end = this.position + 1;
-                        while (end < this.source.length && /[a-zA-Z_]/.test(this.source[end])) {
-                            end++;
-                        }
-                        this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Identifier));
-                        this.position = end - 1;
-                    } else if (this.source.startsWith("//", this.position)) {
-                        let end = this.position + 2;
-                        while (end < this.source.length && this.source[end] !== '\n') {
-                            end++;
-                        }
-                        this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Comment));
-                        this.position = end - 1;
-                    } else {
-                        this.tokenList.add(new Token(this.position, this.position + 1, this.source[this.position], TokenType.Error));
-                    }
-                    break;
-            }
-        }
-        this.position++;
+        this.constructKeywords();
+        this.constructOperators();
     }
 
     /**
@@ -229,6 +52,85 @@ class Lexer {
 
     public getAllTokensArray(): Token[] {
         return this.tokenList.toArray();
+    }
+
+    // Consumes white space characters
+    private consumeWhiteSpace() {
+        while (this.position < this.source.length && /\s/.test(this.source[this.position])) {
+            this.position++;
+        }
+    }
+
+    // Matches a token from the source code
+    private match() {}
+
+    private constructKeywords() {
+        this.keywords.put("func", TokenType.Func);
+        this.keywords.put("if", TokenType.If);
+        this.keywords.put("else", TokenType.Else);
+        this.keywords.put("return", TokenType.Return);
+        this.keywords.put("true", TokenType.True);
+        this.keywords.put("false", TokenType.False);
+        this.keywords.put("output", TokenType.Output);
+        this.keywords.put("null", TokenType.Null);
+        this.keywords.put("for", TokenType.For);
+        this.keywords.put("while", TokenType.While);
+        this.keywords.put("in", TokenType.In);
+        this.keywords.put("create", TokenType.Create);
+        this.keywords.put("string", TokenType.String);
+        this.keywords.put("int", TokenType.Int);
+    }
+
+    private constructOperators() {
+        this.operators.put("+", TokenType.Plus);
+        this.operators.put("-", TokenType.Minus);
+        this.operators.put("*", TokenType.Star);
+        this.operators.put("/", TokenType.Slash);
+        this.operators.put("=", TokenType.Equal);
+        this.operators.put(">", TokenType.Greater);
+        this.operators.put(">=", TokenType.GreaterEqual);
+        this.operators.put("<", TokenType.Less);
+        this.operators.put("<=", TokenType.LessEqual);
+        this.operators.put("!=", TokenType.NotEqual);
+        this.operators.put("(", TokenType.LeftParen);
+        this.operators.put(")", TokenType.RightParen);
+        this.operators.put("{", TokenType.LeftBrace);
+        this.operators.put("}", TokenType.RightBrace);
+        this.operators.put(";", TokenType.SemiColon);
+        this.operators.put(",", TokenType.Comma);
+    }
+
+    private isKeyword(word: string): boolean {
+        return this.keywords.contains(word);
+    }
+
+    private isOperator(word: string): boolean {
+        return this.operators.contains(word);
+    }
+
+    private isIdentifier(word: string): boolean {
+        return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(word);
+    }
+
+    private isString(word: string): boolean {
+        return /^".*"$/.test(word);
+    }
+
+    private isInt(word: string): boolean {
+        return /^[0-9]+$/.test(word);
+    }
+
+    private isComment(word: string): boolean {
+        return /^\/\/.*$/.test(word);
+    }
+
+    private handleSingleCharacterToken(word: string, position: number) {
+        if (this.isOperator(word)) {
+            // start: number, end: number, value: string, type: TokenType
+            this.tokenList.add(new Token(position, position + 1, word, this.operators.get(word)));
+        } else {
+            throw new LexingError(`Invalid token: ${word}`);
+        }
     }
 }
 
