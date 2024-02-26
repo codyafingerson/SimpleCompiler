@@ -88,6 +88,22 @@ class Lexer {
                 case ',':
                     this.tokenList.add(new Token(this.position, this.position + 1, ",", TokenType.Comma));
                     break;
+                case '>':
+                    if (this.source[this.position + 1] === '=') {
+                        this.tokenList.add(new Token(this.position, this.position + 2, ">=", TokenType.GreaterEqual));
+                        this.position++;
+                    } else {
+                        this.tokenList.add(new Token(this.position, this.position + 1, ">", TokenType.Greater));
+                    }
+                    break;
+                case '<':
+                    if (this.source[this.position + 1] === '=') {
+                        this.tokenList.add(new Token(this.position, this.position + 2, "<=", TokenType.LessEqual));
+                        this.position++;
+                    } else {
+                        this.tokenList.add(new Token(this.position, this.position + 1, "<", TokenType.Less));
+                    }
+                    break;
                 default:
                     if (/\d/.test(char)) {
                         let end = this.position + 1;
@@ -198,7 +214,10 @@ class Lexer {
                         }
                         this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Comment));
                         this.position = end - 1;
-                    } else {
+                    } else if (this.source[this.position] === '\n') {
+                        this.tokenList.add(new Token(this.position, this.position + 1, "\n", TokenType.EndOfFile));
+                    }
+                    else {
                         this.tokenList.add(new Token(this.position, this.position + 1, this.source[this.position], TokenType.Error));
                     }
                     break;

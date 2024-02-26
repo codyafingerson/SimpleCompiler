@@ -2,6 +2,7 @@ import Token from "../lexer/Token.ts";
 import TokenType from "../lexer/TokenType.ts";
 import Lexer from "../lexer/Lexer.ts";
 import List from "../data-structures/List.ts";
+import ParserError from "./ParserError";
 
 class Parser {
     private readonly lexer: Lexer;
@@ -18,38 +19,25 @@ class Parser {
     public parse(): void {
         // Start parsing from the first token
         this.expression();
-    }
 
-    // Parses expressions
-    private expression(): void {
-        if(this.tokens.get(this.currentTokenIndex).getValue() === TokenType.Number) {
-            this.currentTokenIndex++;
-            this.term();
-        } else if(this.tokens.get(this.currentTokenIndex).getValue() === TokenType.LeftParen) {
-            this.currentTokenIndex++;
-            this.expression();
-            if(this.tokens.get(this.currentTokenIndex).getValue() === TokenType.RightParen) {
-                this.currentTokenIndex++;
-                this.term();
-            } else {
-                throw new Error("Expected ')'");
-            }
-        } else if(this.tokens.get(this.currentTokenIndex).getValue() == TokenType.Plus) {
-            this.currentTokenIndex++;
-            this.expression();
-            this.term();
-        } else if(this.tokens.get(this.currentTokenIndex).getValue() == TokenType.Minus) {
-            this.currentTokenIndex++;
-            this.expression();
-            this.term();
-        } else {
-            throw new Error("Invalid expression");
+        // Make sure we consumed all the tokens
+        if (this.currentTokenIndex !== this.tokens.length) {
+            throw new ParserError(`Expected end of input, but got ${this.tokens.get(this.currentTokenIndex).getType()}`);
         }
     }
 
-    // Parse terms
-    private term(): void {
-        // @TODO Implement term parsing
+    // Consume a token of a certain type
+    private consume(tokenType: TokenType): void {
+        if (this.tokens.get(this.currentTokenIndex).getType() === tokenType) {
+            this.currentTokenIndex++;
+        } else {
+            throw new ParserError(`Expected token of type ${tokenType}, but got ${this.tokens.get(this.currentTokenIndex).getType()}`);
+        }
+    }
+
+    // @TODO: Implement the rest of the parser
+    private expression(): void {
+        this.consume(TokenType.Plus);
     }
 }
 

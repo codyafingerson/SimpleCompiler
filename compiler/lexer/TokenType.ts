@@ -13,6 +13,10 @@ enum TokenType {
     LeftBrace = "LeftBrace",
     SemiColon = "SemiColon",
     Comma = "Comma",
+    Greater = "Greater",
+    GreaterEqual = "GreaterEqual",
+    Less = "Less",
+    LessEqual = "LessEqual",
 
     // Literals
     String = "String",

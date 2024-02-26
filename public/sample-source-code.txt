@@ -1,7 +1,14 @@
-// This is just a sample function. Delete it to get started with your code.
-func add(x , y) {
-    return x + y;
+// Welcome to The Simple Compiler
+
+func foo(x, y) {
+    if(x <= y) {
+        return false;
+    } else {
+        return x + y;
+    }
 }
 
-// Add two numbers
-add(2, 3); // 5
+
+create result = foo(1, 2);
+
+output(result); // 3
