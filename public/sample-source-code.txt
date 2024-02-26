@@ -1,0 +1,12 @@
+func apple() {
+    create appleVar = "Apple";
+    return appleVar;
+}
+
+func orange() {
+    return "Orange";
+}
+
+create myFavoriteFruit = apple() + "'s and " + orange() + "s";
+
+output(myFavoriteFruit);

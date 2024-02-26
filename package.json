@@ -1,8 +1,11 @@
 {
-  "name": "compiler-ui",
+  "name": "the-simple-compiler",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "author": {
+    "name": "Cody Fingerson"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -10,12 +13,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@types/node": "^20.11.20",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.1"
   },
   "devDependencies": {
+    "@types/node": "^20.11.20",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",

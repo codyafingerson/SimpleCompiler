@@ -1,36 +1,44 @@
-import {ChangeEvent, useEffect, useState} from 'react';
-import Lexer from "../lib/lexer/Lexer.ts";
-import Token from "../lib/lexer/Token.ts";
+import Container from "../components/Container.tsx";
+import {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import Button from "../components/Button.tsx";
+import CodeInput from "../components/CodeInput.tsx";
+import Lexer from "../../compiler/lexer/Lexer.ts";
+import Token from "../../compiler/lexer/Token.ts";
+
+const sampleSourceCodeFile = "./sample-source-code.txt";
 
 export default function LexerPage() {
-    const [userInput, setUserInput] = useState<string>('func myFunc(param) {\n' +
-        '    var p1 = param;\n' +
-        '}');
+    const [sourceCode, setSourceCode] = useState("");
     const [lexerOutput, setLexerOutput] = useState<Token[] | undefined>();
 
     useEffect(() => {
-        console.log(userInput)
-    }, [userInput, lexerOutput]);
+        fetchSampleSourceCode().then(r => setSourceCode(r));
+    }, []);
 
-    const onSubmit = (e: { preventDefault: () => void; }) => {
+    const fetchSampleSourceCode = async () => {
+        const response = await fetch(sampleSourceCodeFile);
+        return await response.text();
+    }
+
+    const onSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        const lexer = new Lexer(userInput);
-        console.log(lexer);
+        const lexer = new Lexer(sourceCode);
 
         lexer.lex();
         setLexerOutput(lexer.getAllTokensArray());
     }
 
     const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setUserInput(e.target.value);
+        setSourceCode(e.target.value);
     }
 
     return (
-        <div className="p-6 bg-gray-800 text-white">
-            <form onSubmit={onSubmit} className="flex flex-col space-y-4">
-                <textarea value={userInput} onChange={onChange} className="p-4 rounded-lg bg-gray-700 text-white h-72 focus:border-gray-800 font-mono"/>
+        <Container
+            header="Lexer Testing Interface"
+            info="Evaluate the compiler's lexer functionality here. If successful, it will display the generated tokens.">
+            <form className="flex flex-col space-y-4" onSubmit={onSubmit}>
+                <CodeInput value={sourceCode} onChangeFunction={onChange}/>
                 <Button type="submit" text="Test Lexer"/>
             </form>
             <div className="mt-6">
@@ -44,6 +52,6 @@ export default function LexerPage() {
                     ))}
                 </ul>
             </div>
-        </div>
+        </Container>
     );
 }
