@@ -1,12 +1,6 @@
-func apple() {
-    create appleVar = "Apple";
-    return appleVar;
+func add(x , y) {
+    return x + y;
 }
 
-func orange() {
-    return "Orange";
-}
-
-create myFavoriteFruit = apple() + "'s and " + orange() + "s";
-
-output(myFavoriteFruit);
+// Add two numbers
+add(2, 3); // 5
