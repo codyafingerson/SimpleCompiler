@@ -4,7 +4,7 @@ It does not do much (as of yet), but it does demonstrate the basic concepts of a
 It is written in TypeScript. The project is open source and can be 
 found on my [GitHub](https://github.com/codyafingerson/SimpleCompiler).
 
-This project is hosted at [https://simple-compiler.vercel.app](https://simple-compiler.vercel.app/about)
+This project is hosted at [https://simple-compiler.vercel.app](https://simple-compiler.vercel.app)
 
 # Information
 Stay tuned... more information coming soon!
