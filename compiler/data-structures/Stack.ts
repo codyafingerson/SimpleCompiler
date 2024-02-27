@@ -1,3 +1,5 @@
+// Path: compiler/data-structures/Stack.ts
+
 class StackNode<E> {
     value: E;
     next: StackNode<E> | null;
@@ -8,6 +10,10 @@ class StackNode<E> {
     }
 }
 
+/**
+ * Represents a stack data structure.
+ * @template T The type of elements in the stack.
+ */
 class Stack<T> {
     head: StackNode<T> | null;
     size: number;

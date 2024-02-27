@@ -1,3 +1,5 @@
+// Path: compiler/data-structures/SymbolTable.ts
+
 class SymbolTable<K, V> {
     private readonly keys: K[];
     private readonly values: V[];

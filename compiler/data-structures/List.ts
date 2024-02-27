@@ -1,3 +1,5 @@
+// Path: compiler/data-structures/List.ts
+
 /**
  * A generic List class in TypeScript.
  * @template T The type of elements in the list.

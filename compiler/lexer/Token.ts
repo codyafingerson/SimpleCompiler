@@ -1,85 +1,55 @@
-import TokenType from "./TokenType.ts";
+// Path: compiler/lexer/Token.ts
+import type TokenType from "./TokenType";
 
 /**
- * A token represents a single element in the input string.
+ * Represents a token in the source code.
+ * @class Token
  */
 class Token {
-    private readonly start: number;
-    private readonly end: number;
-    private readonly value: string;
-    private readonly type: TokenType;
+    private type: TokenType;
+    private lexeme: string;
+    private line: number;
 
     /**
-     * Create a new token with the given start and end indices, value, and type.
-     * @param start The start index of the token.
-     * @param end The end index of the token.
-     * @param value The value of the token.
-     * @param type The type of the token.
+     * 
+     * @param type the type of the token
+     * @param lexeme the lexeme of the token
+     * @param line the line number of the token
      */
-    constructor(start: number, end: number, value: string, type: TokenType) {
-        this.start = start;
-        this.end = end;
-        this.value = value;
+    constructor(type: TokenType, lexeme: string, line: number) {
         this.type = type;
+        this.lexeme = lexeme;
+        this.line = line;
     }
 
-    /**
-     * Get the start index of the token.
-     */
-    public getStart(): number {
-        return this.start;
-    }
-
-    /**
-     * Get the end index of the token.
-     */
-    public getEnd(): number {
-        return this.end;
-    }
-
-    /**
-     * Get the value of the token.
-     */
-    public getValue(): string {
-        return this.value;
-    }
-
-    /**
-     * Get the type of the token.
-     */
+    // Getters
     public getType(): TokenType {
         return this.type;
     }
 
-    /**
-     * Get the token as a string.
-     */
-    public toString(): string {
-        return this.type + " " + this.value;
+    public getLexeme(): string {
+        return this.lexeme;
     }
 
-    /**
-     * Check if this token is equal to another token.
-     * @param other The token to compare to.
-     */
-    public equals(other: Token): boolean {
-        return this.start === other.start && this.end === other.end && this.value === other.value && this.type === other.type;
+    public getLine(): number {
+        return this.line;
     }
 
-    /**
-     * Check if this token is of the given type.
-     * @param type The type to check for.
-     */
-    public isType(type: TokenType): boolean {
-        return this.type === type;
+    // Setters
+    public setType(type: TokenType): void {
+        this.type = type;
     }
 
-    /**
-     * Check if this token is of the given value.
-     * @param value The value to check for.
-     */
-    public isValue(value: string): boolean {
-        return this.value === value;
+    public setLexeme(lexeme: string): void {
+        this.lexeme = lexeme;
+    }
+
+    public setLine(line: number): void {
+        this.line = line;
+    }
+
+    toString(): string {
+        return `${this.type}: ${this.lexeme}`;
     }
 }
 

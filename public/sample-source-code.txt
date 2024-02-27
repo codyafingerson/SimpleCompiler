@@ -1,14 +1,38 @@
-// Welcome to The Simple Compiler
-
-func foo(x, y) {
-    if(x <= y) {
-        return false;
+// Function declarations in the Simple Compiler can be declared as follows:
+func positiveOrNegative(num) {
+    if(num >= 1) {
+        output("Number is positive!");
+    } else if (num == 0) {
+        output("Number is zero!");
     } else {
-        return x + y;
+        output("Number is negative!");
     }
 }
 
+func isBlue(color) {
+    if(color == "blue") {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-create result = foo(1, 2);
+// The simple compiler even has arrays!
+create colors = ["red", "green", "blue"];
 
-output(result); // 3
+create i = 0;
+while (i < 5) {
+    output("While loop iteration: " + i);
+    i++;
+}
+
+create j = 0;
+for (j = 0; j < colors.length; j++) {
+    output("Color at index " + j + ": " + colors[j]);
+}
+
+if(isBlue(colors[2])) {
+    output("The color at index 2 is blue!");
+} else {
+    output("The color at index 2 is not blue!");
+}

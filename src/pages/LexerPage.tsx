@@ -25,7 +25,7 @@ export default function LexerPage() {
 
         const lexer = new Lexer(sourceCode);
 
-        lexer.lex();
+        lexer.scanTokens();
         setLexerOutput(lexer.getAllTokensArray());
     }
 
@@ -47,7 +47,7 @@ export default function LexerPage() {
                     {lexerOutput?.map((token, index) => (
                         <li key={index} className="p-2 bg-gray-700 rounded">
                             <span className="inline-flex bg-purple-400 text-white rounded p-1">{token.getType()}</span>
-                            <span className="ml-2">{token.getValue()}</span>
+                            <span className="ml-2">{token.getLexeme()}</span>
                         </li>
                     ))}
                 </ul>

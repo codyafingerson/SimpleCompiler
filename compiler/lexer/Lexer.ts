@@ -1,253 +1,247 @@
-import Token from "./Token.ts";
-import List from "../data-structures/List.ts";
-import TokenType from "./TokenType.ts";
+// Path: compiler/lexer/Lexer.ts
+import TokenType, { KEYWORDS, DATA_TYPES, SYNTAX } from './TokenType';
+import Token from './Token';
 
 /**
- * The lexer for the Simple Compiler
- * Splits the source code provided, into tokens that can be used by the parser
+ * The Simple Compiler Lexer.
  * @class Lexer
  */
 class Lexer {
-    private readonly tokenList: List<Token>;
-    private readonly source: string;
-    private position: number = 0;
+    private source: string;
+    private tokens: Token[] = [];
+    private start: number = 0;
+    private current: number = 0;
+    private line: number = 1;
 
     /**
-     * Creates a new instance of the Lexer
-     * @param source The source code to be tokenized
+     * Create a new lexer.
+     * @param source the source code to convert to tokens for the parser
      */
     constructor(source: string) {
         this.source = source;
-        this.tokenList = new List<Token>();
-    }
-
-    // Consumes white space characters
-    private consumeWhiteSpace() {
-        while (this.position < this.source.length && /\s/.test(this.source[this.position])) {
-            this.position++;
-        }
-    }
-
-    // Matches a token from the source code
-    private match() {
-        const char = this.source[this.position];
-        if (this.source.startsWith("//", this.position)) {
-            let end = this.position + 2;
-            while (end < this.source.length && this.source[end] !== '\n') {
-                end++;
-            }
-            this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Comment));
-            this.position = end - 1;
-        } else {
-            switch (char) {
-                case '+':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "+", TokenType.Plus));
-                    break;
-                case '-':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "-", TokenType.Minus));
-                    break;
-                case '*':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "*", TokenType.Star));
-                    break;
-                case '/':
-                    // Check if this is a division operation
-                    if (this.source[this.position + 1] !== '/') {
-                        this.tokenList.add(new Token(this.position, this.position + 1, "/", TokenType.Slash));
-                    }
-                    break;
-                case '=':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "=", TokenType.Equal));
-                    break;
-                case '(':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "(", TokenType.LeftParen));
-                    break;
-                case ')':
-                    this.tokenList.add(new Token(this.position, this.position + 1, ")", TokenType.RightParen));
-                    break;
-                case '{':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "{", TokenType.LeftBrace));
-                    break;
-                case '}':
-                    this.tokenList.add(new Token(this.position, this.position + 1, "}", TokenType.RightBrace));
-                    break;
-                case ';':
-                    this.tokenList.add(new Token(this.position, this.position + 1, ";", TokenType.SemiColon));
-                    break;
-                case `"`:
-                    let end = this.position + 1;
-                    while (end < this.source.length && this.source[end] !== `"`) {
-                        end++;
-                    }
-                    if (end === this.source.length) {
-                        this.tokenList.add(new Token(this.position, this.position + 1, `"`, TokenType.Error));
-                    } else {
-                        this.tokenList.add(new Token(this.position, end + 1, this.source.slice(this.position, end + 1), TokenType.String));
-                        this.position = end;
-                    }
-                    break;
-                case ',':
-                    this.tokenList.add(new Token(this.position, this.position + 1, ",", TokenType.Comma));
-                    break;
-                case '>':
-                    if (this.source[this.position + 1] === '=') {
-                        this.tokenList.add(new Token(this.position, this.position + 2, ">=", TokenType.GreaterEqual));
-                        this.position++;
-                    } else {
-                        this.tokenList.add(new Token(this.position, this.position + 1, ">", TokenType.Greater));
-                    }
-                    break;
-                case '<':
-                    if (this.source[this.position + 1] === '=') {
-                        this.tokenList.add(new Token(this.position, this.position + 2, "<=", TokenType.LessEqual));
-                        this.position++;
-                    } else {
-                        this.tokenList.add(new Token(this.position, this.position + 1, "<", TokenType.Less));
-                    }
-                    break;
-                default:
-                    if (/\d/.test(char)) {
-                        let end = this.position + 1;
-                        while (end < this.source.length && /\d/.test(this.source[end])) {
-                            end++;
-                        }
-                        this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Int));
-                        this.position = end - 1;
-                    } else if (this.source.startsWith("func", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "func", TokenType.Func));
-                        this.position += 4;
-
-                        this.consumeWhiteSpace();
-
-                        // Match function name
-                        if (/[a-zA-Z_]/.test(this.source[this.position])) {
-                            let end = this.position + 1;
-                            while (end < this.source.length && /[a-zA-Z0-9_]/.test(this.source[end])) {
-                                end++;
-                            }
-                            this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Identifier));
-                            this.position = end;
-                        }
-
-                        this.consumeWhiteSpace();
-
-                        // Match opening parenthesis
-                        if (this.source[this.position] === '(') {
-                            this.tokenList.add(new Token(this.position, this.position + 1, "(", TokenType.LeftParen));
-                            this.position++;
-
-                            // Match parameters
-                            while (this.position < this.source.length && this.source[this.position] !== ')') {
-                                this.consumeWhiteSpace();
-
-                                // Match parameter
-                                if (/[a-zA-Z_]/.test(this.source[this.position])) {
-                                    let end = this.position + 1;
-                                    while (end < this.source.length && /[a-zA-Z0-9_]/.test(this.source[end])) {
-                                        end++;
-                                    }
-                                    this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Parameter));
-                                    this.position = end;
-                                }
-
-                                this.consumeWhiteSpace();
-
-                                // Match comma
-                                if (this.source[this.position] === ',') {
-                                    this.tokenList.add(new Token(this.position, this.position + 1, ",", TokenType.Comma));
-                                    this.position++;
-                                }
-                            }
-
-                            // Match closing parenthesis
-                            if (this.source[this.position] === ')') {
-                                this.tokenList.add(new Token(this.position, this.position + 1, ")", TokenType.RightParen));
-                                this.position++;
-                            }
-                        }
-                    } else if (this.source.startsWith("if", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 2, "if", TokenType.If));
-                        this.position += 1;
-                    } else if (this.source.startsWith("else", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "else", TokenType.Else));
-                        this.position += 3;
-                    } else if (this.source.startsWith("return", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "return", TokenType.Return));
-                        this.position += 5;
-                    } else if (this.source.startsWith("true", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "true", TokenType.True));
-                        this.position += 3;
-                    } else if (this.source.startsWith("false", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 5, "false", TokenType.False));
-                        this.position += 4;
-                    } else if (this.source.startsWith("output", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "output", TokenType.Output));
-                        this.position += 5;
-                    } else if (this.source.startsWith("null", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 4, "null", TokenType.Null));
-                        this.position += 3;
-                    } else if (this.source.startsWith("for", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 3, "for", TokenType.For));
-                        this.position += 2;
-                    } else if (this.source.startsWith("while", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 5, "while", TokenType.While));
-                        this.position += 4;
-                    } else if (this.source.startsWith("in", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 2, "in", TokenType.In));
-                        this.position += 1;
-                    } else if (this.source.startsWith("create", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "create", TokenType.Create));
-                        this.position += 5;
-                    } else if (this.source.startsWith("string", this.position)) {
-                        this.tokenList.add(new Token(this.position, this.position + 6, "string", TokenType.String));
-                        this.position += 5;
-                    } else if (/[a-zA-Z_]/.test(char)) {
-                        let end = this.position + 1;
-                        while (end < this.source.length && /[a-zA-Z_]/.test(this.source[end])) {
-                            end++;
-                        }
-                        this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Identifier));
-                        this.position = end - 1;
-                    } else if (this.source.startsWith("//", this.position)) {
-                        let end = this.position + 2;
-                        while (end < this.source.length && this.source[end] !== '\n') {
-                            end++;
-                        }
-                        this.tokenList.add(new Token(this.position, end, this.source.slice(this.position, end), TokenType.Comment));
-                        this.position = end - 1;
-                    } else if (this.source[this.position] === '\n') {
-                        this.tokenList.add(new Token(this.position, this.position + 1, "\n", TokenType.EndOfFile));
-                    }
-                    else {
-                        this.tokenList.add(new Token(this.position, this.position + 1, this.source[this.position], TokenType.Error));
-                    }
-                    break;
-            }
-        }
-        this.position++;
     }
 
     /**
-     * Lexes the source code and creates tokens
+     * Scan the source code and tokenize it.
      */
-    public lex() {
-        while (this.position < this.source.length) {
-            this.consumeWhiteSpace();
-            if (this.position < this.source.length) {
-                this.match();
-            }
+    public scanTokens(): Token[] {
+        while (!this.isAtEnd()) {
+            this.start = this.current;
+            this.scanToken();
         }
+        this.tokens.push(new Token(TokenType.EndOfFile, '', this.line));
+        return this.tokens;
     }
 
     /**
-     * Returns all the tokens that have been created
-     * @returns {Token[]} The list of tokens
+     * Get all the tokens as an array.
+     * @returns an array of tokens
      */
-    public getAllTokens(): List<Token> {
-        return this.tokenList;
-    }
-
     public getAllTokensArray(): Token[] {
-        return this.tokenList.toArray();
+        return this.tokens;
+    }
+
+    /**
+     * Check if the lexer has reached the end of the source code.
+     */
+    private isAtEnd(): boolean {
+        return this.current >= this.source.length;
+    }
+
+    /**
+     * Scan the current token and add it to the token list.
+     */
+    private scanToken(): void {
+        const c: string = this.advance();
+        switch (c) {
+            // Handle single-character tokens
+            case '(':
+            case ')':
+            case '{':
+            case '}':
+            case '[':
+            case ']':
+            case ',':
+            case '.':
+            case ';':
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                if (this.match('/')) {
+                    // Ignore everything until the end of the line
+                    while (this.peek() !== '\n' && !this.isAtEnd()) {
+                        this.advance();
+                    }
+                } else {
+                    // It's not a comment, treat it as a regular token
+                    this.addToken(SYNTAX.get(c)!);
+                }
+                break;
+            // Handle multi-character tokens
+            case '=':
+                this.addToken(this.match('=') ? TokenType.DoubleEqual : TokenType.Equal);
+                break;
+            case '!':
+                this.addToken(this.match('=') ? TokenType.NotEqual : TokenType.Error);
+                break;
+            case '<':
+                this.addToken(this.match('=') ? TokenType.LessEqual : TokenType.Less);
+                break;
+            case '>':
+                this.addToken(this.match('=') ? TokenType.GreaterEqual : TokenType.Greater);
+                break;
+            case '"':
+                this.string();
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
+                // Ignore whitespace
+                break;
+            case '\n':
+                this.line++;
+                break;
+            default:
+                if (this.isDigit(c)) {
+                    this.number();
+                } else if (this.isAlpha(c)) {
+                    this.identifier();
+                } else {
+                    // Handle unexpected characters
+                    throw new Error(`Unexpected character '${c}' at line ${this.line}`);
+                }
+                break;
+        }
+    }
+
+    /**
+     * Advance the current character pointer and return the current character.
+     */
+    private advance(): string {
+        return this.source[this.current++];
+    }
+
+    /**
+     * Add a token to the token list.
+     */
+    private addToken(type: TokenType): void {
+        const text: string = this.source.substring(this.start, this.current);
+        this.tokens.push(new Token(type, text, this.line));
+    }
+
+    /**
+     * Match the current character with an expected character.
+     * If it matches, advance the pointer and return true, otherwise return false.
+     */
+    private match(expected: string): boolean {
+        if (this.isAtEnd()) return false;
+        if (this.source[this.current] !== expected) return false;
+        this.current++;
+        return true;
+    }
+
+    /**
+     * Check if a character is a digit.
+     */
+    private isDigit(c: string): boolean {
+        return /^[0-9]$/.test(c);
+    }
+
+    /**
+     * Check if a character is an alphabet letter or an underscore.
+     */
+    private isAlpha(c: string): boolean {
+        return /^[a-zA-Z_]$/.test(c);
+    }
+
+    /**
+     * Scan a string literal.
+     */
+    private string(): void {
+        while (this.peek() !== '"' && !this.isAtEnd()) {
+            if (this.peek() === '\n') this.line++;
+            this.advance();
+        }
+
+        if (this.isAtEnd()) {
+            throw new Error(`Unterminated string at line ${this.line}`);
+        }
+
+        // Consume closing '"'
+        this.advance();
+
+        // Add the string token
+        this.addToken(TokenType.StringLiteral);
+    }
+
+    /**
+     * Scan a number literal.
+     */
+    private number(): void {
+        while (this.isDigit(this.peek())) this.advance();
+
+        // Look for fractional part
+        if (this.peek() === '.' && this.isDigit(this.peekNext())) {
+            // Consume the '.'
+            this.advance();
+
+            while (this.isDigit(this.peek())) this.advance();
+        }
+
+        this.addToken(TokenType.IntegerLiteral);
+    }
+
+    /**
+     * Scan an identifier.
+     */
+    private identifier(): void {
+        while (this.isAlphaNumeric(this.peek())) this.advance();
+
+        const text: string = this.source.substring(this.start, this.current);
+        let type: TokenType | undefined = KEYWORDS.get(text) || DATA_TYPES.get(text) || TokenType.Identifier;
+
+        // Check if it's a boolean literal (true or false)
+        if (this.isBoolean(text)) {
+            type = TokenType.Boolean;
+        }
+
+        // Check if it's a null literal
+        if (text === 'null') {
+            type = TokenType.Null;
+        }
+
+        this.addToken(type!);
+    }
+
+    /**
+     * Look ahead at the next character without advancing the pointer.
+     */
+    private peek(): string {
+        if (this.isAtEnd()) return '\0';
+        return this.source[this.current];
+    }
+
+    /**
+     * Look two characters ahead.
+     */
+    private peekNext(): string {
+        if (this.current + 1 >= this.source.length) return '\0';
+        return this.source[this.current + 1];
+    }
+
+    /**
+     * Check if a character is alphanumeric.
+     */
+    private isAlphaNumeric(c: string): boolean {
+        return this.isAlpha(c) || this.isDigit(c);
+    }
+
+    /**
+     * Check if a string is a boolean.
+     */
+    private isBoolean(s: string): boolean {
+        return s === 'true' || s === 'false';
     }
 }
 

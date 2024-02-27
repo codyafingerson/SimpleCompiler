@@ -1,3 +1,5 @@
+// Path: compiler/data-structures/LinkedList.ts
+
 // Define a class for the node in the linked list
 class ListNode<T> {
     value: T;
