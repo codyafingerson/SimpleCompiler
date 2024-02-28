@@ -66,23 +66,52 @@ export default function HomePage() {
 
                         <h2 className="text-white-800 text-4xl">Grammar</h2>
                         <code className="p-1 font-mono text-sm rounded-md">
-                            <pre className={preStyle}>program : statement_list</pre>
-                            <pre className={preStyle}>statement_list : statement | statement_list statement</pre>
-                            <pre className={preStyle}>statement : variable_declaration | function_declaration</pre>
-                            <pre className={preStyle}>variable_declaration : CREATE VARIABLE '=' value ';'</pre>
-                            <pre
-                                className={preStyle}>function_declaration : FUNC IDENTIFIER '(' parameters ')' '{' statement_list '}'</pre>
-                            <pre
-                                className={preStyle}>function_declaration : FUNC IDENTIFIER '(' parameters ')' '{' statement_list '}'</pre>
-                            <pre className={preStyle}>parameters : parameter | parameters ',' parameter</pre>
-                            <pre className={preStyle}>parameter : IDENTIFIER</pre>
-                            <pre className={preStyle}>value : STRING | INTEGER | VARIABLE</pre>
-                            <pre className={preStyle}>IDENTIFIER : [a-zA-Z][a-zA-Z0-9]*</pre>
-                            <pre className={preStyle}>STRING : '"' [^"]* '"'</pre>
-                            <pre className={preStyle}>INTEGER : [0-9]+</pre>
-                            <pre className={preStyle}>VARIABLE : IDENTIFIER</pre>
-                            <pre className={preStyle}>CREATE : 'create'</pre>
-                            <pre className={preStyle}>FUNC : 'func'</pre>
+                            <pre className={preStyle}>program ::= (comment | function | variableDeclaration | assignment | listInitialization | operation | conditional | loop | outputStatement)*</pre>
+
+                            <pre className={preStyle}>comment ::= "//" [any characters]</pre>
+
+                            <pre className={preStyle}>function ::= "func" functionName "(" parameters ")" "{" statement "}"</pre>
+
+                            <pre className={preStyle}>variableDeclaration ::= "create" variableName "=" expression ";"</pre>
+
+                            <pre className={preStyle}>listInitialization ::= "create" listName "=" "List.new()" ";"</pre>
+
+                            <pre className={preStyle}>assignment ::= variableName "=" expression ";"</pre>
+
+                            <pre className={preStyle}>operation ::= functionName "(" arguments ")"</pre>
+
+                            <pre className={preStyle}>conditional ::= "if" "(" condition ")" "{" statement "}" ("else" "if" "(" condition ")" "{" statement "}")* ("else" "{" statement "}")?</pre>
+
+                            <pre className={preStyle}>loop ::= ("for" "(" initialization ";" condition ";" update ")" "{" statement "}") | ("while" "(" condition ")" "{" statement "}")</pre>
+
+                            <pre className={preStyle}>outputStatement ::= "output" "(" stringExpression ")"</pre>
+
+                            <pre className={preStyle}>functionName ::= [a-zA-Z]+</pre>
+
+                            <pre className={preStyle}>parameters ::= (parameter ("," parameter)*)?</pre>
+
+                            <pre className={preStyle}>parameter ::= variableName</pre>
+
+                            <pre className={preStyle}>arguments ::= (expression ("," expression)*)?</pre>
+
+                            <pre className={preStyle}>condition ::= expression</pre>
+
+                            <pre className={preStyle}>initialization ::= variableDeclaration | assignment | expression</pre>
+
+                            <pre className={preStyle}>update ::= assignment | expression</pre>
+
+                            <pre className={preStyle}>statement ::= (comment | variableDeclaration | assignment | listInitialization | operation | conditional | loop | outputStatement) ";"</pre>
+
+                            <pre className={preStyle}>expression ::= term (("+" | "-" | "*" | "/") term)*</pre>
+
+                            <pre className={preStyle}>term ::= number | variableName | functionName | "(" expression ")"</pre>
+
+                            <pre className={preStyle}>stringExpression ::= "\"" [any characters] "\""</pre>
+
+                            <pre className={preStyle}>number ::= [0-9]+</pre>
+
+                            <pre className={preStyle}>variableName ::= [a-zA-Z]+</pre>
+
                         </code>
 
                     </div>

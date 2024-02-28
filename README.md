@@ -10,32 +10,54 @@ This project is hosted at [https://simple-compiler.vercel.app](https://simple-co
 Stay tuned... more information coming soon!
 
 # Grammar
-More grammar information coming soon!
+**Note:** This is a work in progress and is not yet complete.
 ```
-program : statement_list
+program ::= (comment | function | variableDeclaration | assignment | listInitialization | operation | conditional | loop | outputStatement)*
 
-statement_list : statement | statement_list statement
+comment ::= "//" [any characters]
 
-statement : variable_declaration | function_declaration
+function ::= "func" functionName "(" parameters ")" "{" statement "}"
 
-variable_declaration : CREATE VARIABLE '=' value ';'
+variableDeclaration ::= "create" variableName "=" expression ";"
 
-function_declaration : FUNC IDENTIFIER '(' parameters ')' '{' statement_list '}'
+listInitialization ::= "create" listName "=" "List.new()" ";"
 
-parameters : parameter | parameters ',' parameter
+assignment ::= variableName "=" expression ";"
 
-parameter : IDENTIFIER
+operation ::= functionName "(" arguments ")"
 
-value : STRING | INTEGER | VARIABLE
+conditional ::= "if" "(" condition ")" "{" statement "}" ("else" "if" "(" condition ")" "{" statement "}")* ("else" "{" statement "}")?
 
-IDENTIFIER : [a-zA-Z][a-zA-Z0-9]*
+loop ::= ("for" "(" initialization ";" condition ";" update ")" "{" statement "}") | ("while" "(" condition ")" "{" statement "}")
 
-STRING : '"' [^"]* '"'
-INTEGER : [0-9]+
-VARIABLE : IDENTIFIER
+outputStatement ::= "output" "(" stringExpression ")"
 
-CREATE : 'create'
-FUNC : 'func'
+functionName ::= [a-zA-Z]+
+
+parameters ::= (parameter ("," parameter)*)?
+
+parameter ::= variableName
+
+arguments ::= (expression ("," expression)*)?
+
+condition ::= expression
+
+initialization ::= variableDeclaration | assignment | expression
+
+update ::= assignment | expression
+
+statement ::= (comment | variableDeclaration | assignment | listInitialization | operation | conditional | loop | outputStatement) ";"
+
+expression ::= term (("+" | "-" | "*" | "/") term)*
+
+term ::= number | variableName | functionName | "(" expression ")"
+
+stringExpression ::= "\"" [any characters] "\""
+
+number ::= [0-9]+
+
+variableName ::= [a-zA-Z]+
+
 ```
 
 
