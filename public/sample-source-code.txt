@@ -1,38 +1,52 @@
-// Function declarations in the Simple Compiler can be declared as follows:
-func positiveOrNegative(num) {
-    if(num >= 1) {
-        output("Number is positive!");
-    } else if (num == 0) {
-        output("Number is zero!");
+// Functions example
+func add(num1, num2) {
+    return num1 + num2;
+}
+
+func sub(num1, num2) {
+    return num1 - num2;
+}
+
+func multiply(num1, num2) {
+    return num1 * num2;
+}
+
+func divide(num1, num2) {
+    if(num2 != 0) {
+        return num1 / num2;
+    } else if(num1 == 0) {
+        return 0.0;
+    } else if(num2 == 0) {
+        return null;
     } else {
-        output("Number is negative!");
+        return error("This shouldn't have happened!");
     }
 }
 
-func isBlue(color) {
-    if(color == "blue") {
-        return true;
-    } else {
-        return false;
-    }
+create x = 10;
+create y = 3;
+
+create myList = List.new(); // The simple compiler even has lists!
+
+create addRes = add(x, y);
+create subRes = sub(x, y);
+create multiplyRes = multiply(x, y);
+create divideRes = divide(x, y);
+
+myList.add(addRes);
+myList.add(subRes);
+myList.add(multiplyRes);
+
+if(divideRes != null) {
+    myList.add(divideRes);
 }
 
-// The simple compiler even has arrays!
-create colors = ["red", "green", "blue"];
-
-create i = 0;
-while (i < 5) {
-    output("While loop iteration: " + i);
-    i++;
+// For loop example
+for(i = 0; i < myList.length; i++) {
+    output("Number {i}: " + myList.get(i));
 }
 
-create j = 0;
-for (j = 0; j < colors.length; j++) {
-    output("Color at index " + j + ": " + colors[j]);
-}
-
-if(isBlue(colors[2])) {
-    output("The color at index 2 is blue!");
-} else {
-    output("The color at index 2 is not blue!");
+// While loop example
+while(true) {
+    output("This is a while loop... typical while loop!");
 }
