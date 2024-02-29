@@ -1,16 +1,19 @@
-import {ChangeEvent, FC} from "react";
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import {dracula} from "@uiw/codemirror-theme-dracula";
 
 interface CodeInputProps {
     value: string;
-    onChangeFunction: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-    isDisabled?: boolean;
+    onChangeFunction: (value: string, viewUpdate?: any) => void;
 }
 
-// Your CodeInput component would look something like this:
-const CodeInput: FC<CodeInputProps> = ({ value, onChangeFunction, isDisabled }) => {
+export default function CodeInput({value, onChangeFunction }: CodeInputProps) {
     return (
-        <textarea value={value} onChange={onChangeFunction} className="p-4 rounded-lg bg-gray-700 text-white h-96 focus:border-gray-800 font-mono" disabled={isDisabled}/>
-    );
+        <CodeMirror
+            value={value}
+            extensions={[javascript({ jsx: true })]}
+            theme={dracula}
+            onChange={onChangeFunction}
+            height="500px" />
+    )
 }
-
-export default CodeInput;

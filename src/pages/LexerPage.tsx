@@ -1,5 +1,5 @@
 import Container from "../components/Container.tsx";
-import {ChangeEvent, FormEvent, useEffect, useState} from "react";
+import {FormEvent, useEffect, useState, useCallback} from "react";
 import Button from "../components/Button.tsx";
 import CodeInput from "../components/CodeInput.tsx";
 import Lexer from "../../compiler/lexer/Lexer.ts";
@@ -29,9 +29,9 @@ export default function LexerPage() {
         setLexerOutput(lexer.getAllTokensArray());
     }
 
-    const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        setSourceCode(e.target.value);
-    }
+    const onChange = useCallback((val: string) => {
+        setSourceCode(val);
+    }, []);
 
     return (
         <Container
