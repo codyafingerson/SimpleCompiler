@@ -1,6 +1,6 @@
 // Custom components
 import Container from "../components/Container.tsx";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const preStyle = "p-1 font-mono text-sm rounded-md";
 
